@@ -15,7 +15,8 @@ youtube_search_opts = {
 }
 youtube_url = "https://www.youtube.com/results?search_query=%(q)s&sp=%(sp)s" % youtube_search_opts
 print(youtube_url)
-skip_forward_to_video = 0 
+
+skip_forward_to_video = 0
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 youtube_dl_opts = {
@@ -40,7 +41,6 @@ async def main():
     if (response.request.redirectChain):
       print("Consent to cookies")
       await asyncio.sleep(2)
-      await page.screenshot({"path": "screenshot.png", "fullPage": True})
       await page.evaluate('''
         () => {
           Array.from(document.querySelectorAll('span'))
@@ -74,20 +74,20 @@ async def main():
 
       print("Page count: {} ({} errors) | Video count: {} | Will download: {}".format(scroll_count, download_errors, video_count, len(video_urls)))
 
-      if not skip_forward_to_video or skip_forward_to_video < video_count:
-        try:
-          ydl.download(video_urls)
-        except youtube_dl.utils.DownloadError as err:
-          print("Download error: {}".format(err))
-          download_errors += 1
-        except:
-          print("Unknown error when downloading")
-          download_errors += 1
-      else:
-        print("Skipping forward")
+      for video_url in video_urls:
+        if not skip_forward_to_video or skip_forward_to_video < video_count:
+          try:
+            ydl.download([video_url])
+          except youtube_dl.utils.DownloadError as err:
+            print("Download error: {}".format(err))
+            download_errors += 1
+          except:
+            print("Unknown error when downloading")
+            download_errors += 1
+
+        video_count += 1
 
       scroll_count += 1
-      video_count += len(video_urls)
       last_url = video_urls[-1]
 
       await scrollDown(page)
