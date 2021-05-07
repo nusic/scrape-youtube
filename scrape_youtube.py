@@ -24,7 +24,7 @@ youtube_dl_opts = {
     'outtmpl': dir_path + '/downloads/' + youtube_search_query + '/%(title)s - (id %(id)s).%(ext)s',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
+        'preferredcodec': 'vorbis',
         'preferredquality': '192',
     }],
 }
@@ -33,7 +33,7 @@ async def main():
   print("Open youtube downloader")
   with youtube_dl.YoutubeDL(youtube_dl_opts) as ydl:
     print("Browse to youtube")
-    browser = await launch({"headless": True, "args": ['--disable-dev-shm-usage']})
+    browser = await launch({"headless": True, "args": ['--disable-dev-shm-usage', '--no-sandbox']})
     page = await browser.newPage()
     response = await page.goto(youtube_url)
     await page.setViewport({ "width": 1200, "height": 1200 })
