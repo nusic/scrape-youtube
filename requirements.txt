@@ -1,0 +1,2 @@
+youtube_dl==2021.4.26
+pyppeteer==0.2.5
