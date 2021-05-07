@@ -3,10 +3,10 @@ from pyppeteer import launch
 import youtube_dl
 import asyncio
 import urllib.parse
-import os 
+import os
+import sys
 
-
-youtube_search_query = "music jam"
+youtube_search_query = " ".join(sys.argv[1:]) or "music jam"
 youtube_search_opts = {
   "q": urllib.parse.quote_plus(youtube_search_query),
   "sp": 'CAISBhABGAEwAQ%253D%253D' # Video, under 4 min, Creative Commons, Sort by Upload date
