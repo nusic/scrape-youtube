@@ -57,6 +57,7 @@ async def main():
     scroll_count = 0
     download_errors = 0
     video_count = 0
+    no_new_video_count = 0
     
     while True:
       video_urls = await page.evaluate('''
@@ -70,7 +71,7 @@ async def main():
       # Make sure we only consider new video urls
       if last_url and last_url in video_urls:
         last_index = video_urls.index(last_url)
-        video_urls = video_urls[last_index:]
+        video_urls = video_urls[last_index+1:]
 
       print("Page count: {} ({} errors) | Video count: {} | Will download: {}".format(scroll_count, download_errors, video_count, len(video_urls)))
 
@@ -88,7 +89,14 @@ async def main():
         video_count += 1
 
       scroll_count += 1
-      last_url = video_urls[-1]
+      if video_urls:
+        last_url = video_urls[-1]
+        no_new_video_count = 0
+      else:
+        no_new_video_count += 1
+        if no_new_video_count > 100:
+          print("Doesn't seem to find any more videos. Exiting")
+          exit(1)
 
       await scrollDown(page)
 
